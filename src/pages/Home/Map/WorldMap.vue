@@ -1,0 +1,66 @@
+<template>
+    <div class="out">
+        <div class="title">世界疫情地图</div>
+        <van-tabs animated :lazy-render="false" color="#3343ff">
+            <van-tab :title="'现存确诊'">
+                <div ref="main1" style="width: 3.5rem;height: 2.1rem;"></div>
+            </van-tab>
+            <van-tab :title="'累计确诊'">
+                <div ref="main2" style="width: 3.5rem;height: 2.1rem;"></div>
+            </van-tab>
+        </van-tabs>
+    </div>
+</template>
+
+<script>
+import api from "../../../api";
+
+export default {
+    name: "WorldMap",
+    props: ['chinaData'],
+    mounted() {
+        //获取世界疫情数据
+        api.getWorldData().then((res) => {
+            console.log(res.data)
+            const retdata = res.data.retdata
+            const confirmArr = []
+            const curConfirmArr = []
+            retdata.forEach(item => {
+                let obj = {}//累计
+                obj.name = item.xArea
+                obj.value = item.confirm
+                confirmArr.push(obj)
+                let now = {}//现存
+                now.name = item.xArea
+                now.value = item.curConfirm
+                curConfirmArr.push(now)
+            })
+            confirmArr.push({
+                name: '中国',
+                value: this.chinaData.confirm
+            })
+            curConfirmArr.push({
+                name: '中国',
+                value: this.chinaData.curConfirm
+            })
+            this.$nextTick(() => {
+                this.$myChart.worldMap(this.$refs.main2, confirmArr)//显示地图(累计)
+                this.$myChart.worldMap(this.$refs.main1, curConfirmArr)//显示地图(现存)
+            })
+        })
+    }
+}
+</script>
+
+<style lang="less" scoped>
+.out {
+    padding: .1rem;
+
+    .title {
+        border-left: 4px solid #3343ff;
+        padding-left: 0.1rem;
+        font-weight: bold;
+        font-size: .2rem;
+    }
+}
+</style>

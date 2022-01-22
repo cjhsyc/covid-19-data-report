@@ -1,0 +1,22 @@
+module.exports={
+    lintOnSave:false,
+    devServer:{
+        proxy:{
+            '/api':{
+                target:'http://apis.juhe.cn',//聚合数据
+                changeOrigin:true,
+                pathRewrite:{
+                    '^/api':''
+                }
+            },
+            //360接口
+            '/foo':{
+                target: 'https://bang.360.cn',
+                changeOrigin:true,
+                pathRewrite:{
+                    '^/foo':''
+                }
+            }
+        }
+    }
+}
